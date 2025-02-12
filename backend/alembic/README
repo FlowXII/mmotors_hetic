@@ -1,0 +1,24 @@
+Generic single-database configuration.
+
+Activez l'environnement virtuel :
+source .venv/bin/activate sur mac
+.venv/Scripts/activate.ps1 sur windows
+
+Installer les dépendances :
+pip install -r requirements.txt
+
+Une fois dans l'environnement virtuel, vous pouvez générer une nouvelle migration :
+
+# Générer une nouvelle migration
+alembic revision --autogenerate -m "Initial migration"
+
+# Appliquer la migration
+alembic upgrade head
+
+# Vérifier les migrations
+alembic history
+
+# Rétrograder une migration
+alembic downgrade -1
+
+Voilà c'est bon !
