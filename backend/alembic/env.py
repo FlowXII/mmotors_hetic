@@ -21,7 +21,7 @@ load_dotenv()
 config = context.config
 
 # URL de la base de données (notez les guillemets)
-db_url = "postgresql://postgres:quickdraw9@localhost:5432/mmotors"
+db_url = os.getenv("DATABASE_URL")
 config.set_main_option("sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
