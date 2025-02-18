@@ -1,7 +1,7 @@
-import React from 'react'
-import './LocationPage.scss'
-import Select from '../../components/form/Select'
-import ProductCard from '../../components/product/ProductCard'
+import React from 'react';
+import './LocationPage.scss';
+import Select from '../../components/form/Select';
+import ProductCard from '../../components/product/ProductCard';
 
 export default function LocationPage() {
   return (
@@ -23,5 +23,5 @@ export default function LocationPage() {
         </div>
     
     </div>
-  )
+  );
 }

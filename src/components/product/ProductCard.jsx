@@ -1,5 +1,5 @@
-import React from 'react'
-import './ProductCard.scss'
+import React from 'react';
+import './ProductCard.scss';
 
 export default function ProductCard() {
     return (
@@ -26,5 +26,5 @@ export default function ProductCard() {
             </div>
 
         </div>
-    )
+    );
 }

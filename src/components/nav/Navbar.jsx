@@ -1,6 +1,6 @@
-import React from 'react'
-import './Navbar.scss'
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react';
+import './Navbar.scss';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Navbar() {
 
@@ -8,9 +8,9 @@ export default function Navbar() {
         { name: 'Accueil', path: '/' },
         { name: 'Location', path: '/location' },
         { name: 'Achat', path: '/achat' },
-    ]
+    ];
 
-    const location = useLocation()
+    const location = useLocation();
 
     return (
         <div className="container">
@@ -20,19 +20,13 @@ export default function Navbar() {
                 </a>
                 <nav>
                     <ul>
-                        {
-                            nav.map((item, index) => {
-                                return (
-                                    <li key={index}
-                                        className={location.pathname === item.path ? 'active' : ''}
-                                    >
-                                        <Link to={item.path}>
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                )
-                            })
-                        }
+                        {nav.map((item, index) => (
+                            <li key={index} className={location.pathname === item.path ? 'active' : ''}>
+                                <Link to={item.path}>
+                                    {item.name}
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </nav>
                 <button className='connect'>
@@ -43,5 +37,5 @@ export default function Navbar() {
                 </button>
             </div>
         </div>
-    )
+    );
 }
