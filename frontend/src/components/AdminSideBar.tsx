@@ -1,57 +1,121 @@
-import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
-import { AdminCardProps } from "@/types/AdminCardProps";
-import { Icons } from "@/components/Icons";
+import React from "react"; 
+import { NavLink } from "react-router-dom";
+import { Box, VisuallyHidden, useToken } from "@chakra-ui/react";
+import { AdminCardProps } from "../types/AdminCardProps";
+import { Tooltip } from "./ui/tooltip";
 
-const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>>= ({ selectedTab }) => {
+const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>> = ({ selectedTab }) => {
+  const [accentBg, accentFg, mutedFg] = useToken('colors', [
+    'accent',
+    'accent.foreground',
+    'muted.foreground'
+  ]);
+
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-20">
-      
-          <span className="sr-only">Acme Inc</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipContent side="right">Commandes</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/admin/produits"
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8 ${
-                  selectedTab === 'produits' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                <Icons.shoppingBasket className="h-6 w-6 cursor-pointer" />
-                <span className="sr-only">Produits</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Produits</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href="/admin/categories"
-                className={`flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8 ${
-                  selectedTab === 'categories' ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                <Icons.chartBarStacked className="h-6 w-6 cursor-pointer" />
-                <span className="sr-only">Catégories</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">Catégories</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipContent side="right">Paramètres</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </nav>
-    </aside>
-    
+    <Box
+      as="aside"
+      position="fixed"
+      top={0}
+      bottom={0}
+      left={0}
+      zIndex={10}
+      display={{ base: "none", sm: "flex" }}
+      flexDirection="column"
+      w="56px"
+      borderRightWidth="1px"
+      bg="background"
+    >
+      <Box
+        as="nav"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={4}
+        px={2}
+        py={{ base: 4, sm: 20 }}
+      >
+        <VisuallyHidden>Acme Inc</VisuallyHidden>
+
+        {/* Produits */}
+        <Tooltip label="Produits" placement="right" hasArrow>
+          <NavLink
+            to="/admin/produits"
+            style={({ isActive }) => ({
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "36px",
+              width: "36px",
+              borderRadius: "lg",
+              transition: "all 0.2s",
+              backgroundColor: isActive ? accentBg : "transparent",
+              color: isActive ? accentFg : mutedFg,
+              textDecoration: "none",
+              _hover: { color: 'chakra-body-text' },
+            })}
+          >
+            <Icons.shoppingBasket boxSize={6} cursor="pointer" />
+            <VisuallyHidden>Produits</VisuallyHidden>
+          </NavLink>
+        </Tooltip>
+
+        {/* Catégories */}
+        <Tooltip label="Catégories" placement="right" hasArrow>
+          <NavLink
+            to="/admin/categories"
+            style={({ isActive }) => ({
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "36px",
+              width: "36px",
+              borderRadius: "lg",
+              transition: "all 0.2s",
+              backgroundColor: isActive ? accentBg : "transparent",
+              color: isActive ? accentFg : mutedFg,
+              textDecoration: "none",
+              _hover: { color: 'chakra-body-text' },
+            })}
+          >
+            <Icons.chartBarStacked boxSize={6} cursor="pointer" />
+            <VisuallyHidden>Catégories</VisuallyHidden>
+          </NavLink>
+        </Tooltip>
+      </Box>
+
+      {/* Section basse */}
+      <Box
+        mt="auto"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={4}
+        px={2}
+        py={{ sm: 5 }}
+      >
+        <Tooltip label="Paramètres" placement="right" hasArrow>
+          <NavLink
+            to="/admin/parametres"
+            style={({ isActive }) => ({
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "36px",
+              width: "36px",
+              borderRadius: "lg",
+              transition: "all 0.2s",
+              backgroundColor: isActive ? accentBg : "transparent",
+              color: isActive ? accentFg : mutedFg,
+              textDecoration: "none",
+              _hover: { color: 'chakra-body-text' },
+            })}
+          >
+            <Icons.settings boxSize={6} cursor="pointer" />
+            <VisuallyHidden>Paramètres</VisuallyHidden>
+          </NavLink>
+        </Tooltip>
+      </Box>
+    </Box>
   );
 };
 

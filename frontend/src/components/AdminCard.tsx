@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardHeader, CardBody, CardFooter, Heading, Skeleton, Box } from "@chakra-ui/react";
 import AdminTable from "./AdminTable";
-import { AdminCardProps } from "@/types/AdminCardProps";
+import { AdminCardProps } from "../types/AdminCardProps";
 import TablePlaceholder from "./TablePlaceHolder";
 
 const AdminCard: React.FC<AdminCardProps> = ({

@@ -1,3 +1,4 @@
+import React from "react"; 
 import { useState } from "react"; // Importer useState
 import {
   ListFilter,
@@ -8,11 +9,13 @@ import {
 import {
   Breadcrumb,
   DrawerContent,
+  DrawerRoot,
+  DrawerTrigger,
 } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
-import { AdminCardProps } from "@/types/AdminCardProps";
-import { useToast } from "@/hooks/use-toast"; 
+import { AdminCardProps } from "../types/AdminCardProps";
+import { useToast } from "../hooks/use-toast"; 
 import { Drawer } from "@chakra-ui/react";
 
 import {
@@ -20,12 +23,12 @@ import {
   MenuItem,
   MenuRoot,
   MenuTrigger,
-} from "./ui/menu";
+} from "@chakra-ui/react";
 
 import { ProductForm, ProductFormValues } from "../forms/productForm";
 import { CategoryForm, CategoryFormValues } from "../forms/categoryForm";
-import { Product } from "@/types/Product";
-import { Category } from "@/types/Category";
+import { Product } from "../types/Product";
+import { Category } from "../types/Category";
 
 const AdminHeader: React.FC<
 Pick<AdminCardProps, "selectedTab"> & {
@@ -117,7 +120,7 @@ Pick<AdminCardProps, "selectedTab"> & {
                 </Link>
             </nav>
           </DrawerContent>
-        </Drawer>
+        </DrawerRoot>
         <Breadcrumb.Root className="hidden md:flex">
           <Breadcrumb.List>
             <Breadcrumb.Item>
@@ -185,6 +188,7 @@ Pick<AdminCardProps, "selectedTab"> & {
           <MenuContent>
             <MenuItem>Par date</MenuItem>
             <MenuItem>Par nom</MenuItem>
+          </MenuContent>
         </MenuRoot>
       </div>
     </header>
