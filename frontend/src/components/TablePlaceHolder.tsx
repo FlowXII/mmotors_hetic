@@ -1,41 +1,48 @@
 import React from 'react';
-import { Skeleton } from '../ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getNumberColumns } from '@/lib/utils';
+import { Skeleton } from '@chakra-ui/react';
+import { Table } from '@chakra-ui/react';
+import { getNumberColumns } from '../utils/utils'; 
 
 const TablePlaceholder: React.FC = () => {
   const placeholderRows = Array.from({ length: 3 });
   const placeholderColumns = Array.from({ length: 4 });
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
+    <Table.Root>
+      <Table.Header>
+        <Table.Row>
           {placeholderColumns.map((_, index) => (
-            <TableHead className={getNumberColumns(index)} key={index}>
-              <Skeleton className="h-4 w-full" />
-            </TableHead>
+            <Table.ColumnHeader className={getNumberColumns(index)} key={index}>
+              <Skeleton height="20px" />
+            </Table.ColumnHeader>
           ))}
-          <TableHead>
+          <Table.ColumnHeader>
             <span className="sr-only">Actions</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+          </Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
         {placeholderRows.map((_, rowIndex) => (
-          <TableRow key={rowIndex}>
+          <Table.Row key={rowIndex}>
             {placeholderColumns.map((_, colIndex) => (
-              <TableCell key={colIndex} className={getNumberColumns(colIndex)}>
-                <Skeleton className="h-4 w-full" />
-              </TableCell>
+              <Table.Cell key={colIndex} className={getNumberColumns(colIndex)}>
+                <Skeleton height="20px" />
+              </Table.Cell>
             ))}
-            <TableCell>
-              <Skeleton className="h-4 w-1/3" />
-            </TableCell>
-          </TableRow>
+            <Table.Cell>
+              <Skeleton height="20px" width="33%" />
+            </Table.Cell>
+          </Table.Row>
         ))}
-      </TableBody>
-    </Table>
+      </Table.Body>
+      <Table.Footer>
+        <Table.Row>
+          <Table.Cell>
+            <Skeleton height="20px" />
+          </Table.Cell>
+        </Table.Row>
+      </Table.Footer>
+    </Table.Root>
   );
 };
 

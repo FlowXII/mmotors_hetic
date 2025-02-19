@@ -12,10 +12,10 @@ import {
   DrawerRoot,
   DrawerTrigger,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import { Button } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import { AdminCardProps } from "../types/AdminCardProps";
-import { useToast } from "../hooks/use-toast"; 
 import { Drawer } from "@chakra-ui/react";
 
 import {
@@ -40,7 +40,7 @@ Pick<AdminCardProps, "selectedTab"> & {
     null
   ); 
   
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const handleAddClick = () => {
     setCurrentItem(null);
     setIsDialogOpen(true); 
@@ -55,19 +55,19 @@ Pick<AdminCardProps, "selectedTab"> & {
       await onAddClick(data);  // Attendre que l'ajout soit terminé
 
       // Afficher un toast de succès après l'ajout du produit
-      toast({
-        title: "Succès",
-        description: `Le produit "${data.name}" a été ajouté avec succès.`,
-        variant: "default",  
-      });
+      // toast({
+      //   title: "Succès",
+      //   description: `Le produit "${data.name}" a été ajouté avec succès.`,
+      //   variant: "default",  
+      // });
 
       setIsDialogOpen(false);  
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: `Une erreur est survenue lors de l'ajout du produit.`,
-        variant: "destructive",  
-      });
+      // toast({
+      //   title: "Erreur",
+      //   description: `Une erreur est survenue lors de l'ajout du produit.`,
+      //   variant: "destructive",  
+      // });
     }
   };
 
@@ -75,19 +75,19 @@ Pick<AdminCardProps, "selectedTab"> & {
     try {
       await onAddClick(data);
 
-      toast({
-        title: "Succès",
-        description: `La catégorie "${data.name}" a été ajoutée avec succès.`,
-        variant: "default",
-      });
+      // toast({
+      //   title: "Succès",
+      //   description: `La catégorie "${data.name}" a été ajoutée avec succès.`,
+      //   variant: "default",
+      // });
 
       setIsDialogOpen(false);
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: `Une erreur est survenue lors de l'ajout de la catégorie.`,
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Erreur",
+      //   description: `Une erreur est survenue lors de l'ajout de la catégorie.`,
+      //   variant: "destructive",
+      // });
     }
   };
 
@@ -108,14 +108,14 @@ Pick<AdminCardProps, "selectedTab"> & {
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
-              <Icons.shoppingBasket className="h-6 w-6 cursor-pointer" />
+                <ListFilter className="h-3.5 w-3.5" />
                   Produits
                 </Link>
                 <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-foreground"
                 >
-              <Icons.chartBarStacked className="h-6 w-6 cursor-pointer" />
+                <ListFilter className="h-3.5 w-3.5" />
                   Catégories
                 </Link>
             </nav>

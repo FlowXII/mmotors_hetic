@@ -1,155 +1,98 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+} from '@chakra-ui/react';
 import { MoreHorizontal } from 'lucide-react';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { ProductForm } from '../forms/productForm';
 import { CategoryForm } from '../forms/categoryForm';
 import { Product } from '@/types/Product';
-import { Category } from '@/types/Category';
-import { useToast } from "@/hooks/use-toast"
+import {
+  MenuRoot,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+} from '../components/ui/menu';
+import {
+  DialogRoot,
+  DialogTrigger,
+  DialogContent,
+  DialogCloseTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogBody,
+  DialogFooter,
+} from '../components/ui/dialog';
 
-const getNumberColumns = (index: number) => {
-  if (index > 2) return 'hidden lg:table-cell';
-  if (index > 1) return 'hidden md:table-cell';
-  if (index > 0) return 'hidden sm:table-cell';
-  return '';
+const getNumberColumns = (index) => {
+  if (index > 2) return { base: 'none', lg: 'table-cell' };
+  if (index > 1) return { base: 'none', md: 'table-cell' };
+  if (index > 0) return { base: 'none', sm: 'table-cell' };
+  return {};
 };
 
-interface AdminTableProps {
-  items: any[];
-  columns: string[];
-  editItem: (item: any) => void;
-  removeItem: (id: string) => void;
-  selectedTab: string;
-  onAddClick: (data: Product | Category) => void;
-  onEditClick: (data: Product | Category) => void;
-}
-
-const AdminTable: React.FC<AdminTableProps> = ({ items, columns, editItem, removeItem, selectedTab, onAddClick, onEditClick }) => {
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
-  const [currentItem, setCurrentItem] = useState<any>(null);
+const AdminTable = ({ items, columns, editItem, removeItem, selectedTab, onAddClick, onEditClick }) => {
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [currentItem, setCurrentItem] = useState(null);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
-  const { toast } = useToast();
 
-  const handleEditClick = (item: any) => {
-    setCurrentItem(item); // sélectionne l'élément à modif
-    if (selectedTab === 'produits') {
-      setIsProductFormOpen(true);  //ouvre ProductForm
-    } else if (selectedTab === 'categories') {
-      setIsCategoryFormOpen(true);  // ouvre CategoryForm
-    }
+  const handleEditClick = (item) => {
+    setCurrentItem(item);
+    selectedTab === 'produits' ? setIsProductFormOpen(true) : setIsCategoryFormOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    setSelectedItemId(id); 
-  };
-
-  const confirmDelete = async () => {
-    if (selectedItemId) {
-      try {
-        await removeItem(selectedItemId); 
-        setSelectedItemId(null); 
-  
-        toast({
-          title: "Suppression réussie",
-          description: `L'élément a été supprimé avec succès.`,
-          variant: "default", 
-        });
-      } catch (error) {
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors de la suppression de l'élément.",
-          variant: "destructive", 
-        });
-      }
-    }
-  };
-  
-  const handleFormSubmit = async (data: any) => {
-    try {
-      if (currentItem) {
-        await onEditClick({ ...data, id: currentItem.id });
-  
-        toast({
-          title: "Modification réussie",
-          description: `L'élément a été modifié avec succès.`,
-          variant: "default", 
-        });
-      } else {
-        await onAddClick(data);
-  
-        toast({
-          title: "Ajout réussi",
-          description: `L'élément a été ajouté avec succès.`,
-          variant: "default", // 
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: `Une erreur est survenue lors de ${currentItem ? "la modification" : "l'ajout"} de l'élément.`,
-        variant: "destructive", 
-      });
-    }
-  
-    setIsProductFormOpen(false);
-    setIsCategoryFormOpen(false);
+  const handleDelete = (id) => {
+    setSelectedItemId(id);
   };
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
+      <Table.Root>
+        <Table.Header>
+          <Table.Row>
             {columns.map((col, index) => (
-              <TableHead key={index} className={getNumberColumns(index)}>
+              <Table.ColumnHeader key={index} display={getNumberColumns(index)}>
                 {col.charAt(0).toUpperCase() + col.slice(1)}
-              </TableHead>
+              </Table.ColumnHeader>
             ))}
-            <TableHead>
+            <Table.ColumnHeader>
               <span className="sr-only">Actions</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            </Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {items.map((item, index) => (
-            <TableRow key={index}>
+            <Table.Row key={index}>
               {columns.map((col, i) => (
-                <TableCell key={i} className={getNumberColumns(i)}>
+                <Table.Cell key={i} display={getNumberColumns(i)}>
                   {item[col]}
-                </TableCell>
+                </Table.Cell>
               ))}
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button aria-haspopup="true" size="icon" variant="ghost">
+              <Table.Cell>
+                <MenuRoot>
+                  <MenuTrigger asChild>
+                    <button>
                       <MoreHorizontal className="h-4 w-4" />
-                      <span className="sr-only">Toggle menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => handleEditClick(item)}>
+                    </button>
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuItem onClick={() => handleEditClick(item)}>
                       Modifier {selectedTab === 'produits' ? 'Produit' : 'Catégorie'}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDelete(item.id)}>
-                      Supprimer
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+                    </MenuItem>
+                    <MenuItem onClick={() => handleDelete(item.id)}>Supprimer</MenuItem>
+                  </MenuContent>
+                </MenuRoot>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
+
       {isProductFormOpen && (
         <ProductForm
           isOpen={isProductFormOpen}
           onClose={() => setIsProductFormOpen(false)}
-          onSubmit={handleFormSubmit}
+          onSubmit={onEditClick}
           defaultValues={currentItem || {}}
         />
       )}
@@ -158,26 +101,29 @@ const AdminTable: React.FC<AdminTableProps> = ({ items, columns, editItem, remov
         <CategoryForm
           isOpen={isCategoryFormOpen}
           onClose={() => setIsCategoryFormOpen(false)}
-          onSubmit={handleFormSubmit}
+          onSubmit={onEditClick}
           defaultValues={currentItem || {}}
         />
       )}
 
-      {/* Dialog pour confirmer la suppression */}
-      <AlertDialog open={selectedItemId !== null} onOpenChange={() => setSelectedItemId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSelectedItemId(null)}>Annuler</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={confirmDelete}>Supprimer</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DialogRoot isOpen={selectedItemId !== null} onClose={() => setSelectedItemId(null)}>
+        <DialogTrigger />
+        <DialogContent>
+          <DialogCloseTrigger />
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.
+          </DialogBody>
+          <DialogFooter>
+            <button onClick={() => setSelectedItemId(null)}>Annuler</button>
+            <button className="text-red-500" onClick={() => removeItem(selectedItemId)}>
+              Supprimer
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </DialogRoot>
     </>
   );
 };

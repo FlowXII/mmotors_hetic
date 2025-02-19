@@ -3,6 +3,9 @@ import { NavLink } from "react-router-dom";
 import { Box, VisuallyHidden, useToken } from "@chakra-ui/react";
 import { AdminCardProps } from "../types/AdminCardProps";
 import { Tooltip } from "./ui/tooltip";
+import {
+  ListFilter,
+} from "lucide-react";
 
 const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>> = ({ selectedTab }) => {
   const [accentBg, accentFg, mutedFg] = useToken('colors', [
@@ -54,7 +57,7 @@ const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>> = ({ selectedT
               _hover: { color: 'chakra-body-text' },
             })}
           >
-            <Icons.shoppingBasket boxSize={6} cursor="pointer" />
+          <ListFilter className="h-3.5 w-3.5" />
             <VisuallyHidden>Produits</VisuallyHidden>
           </NavLink>
         </Tooltip>
@@ -77,7 +80,7 @@ const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>> = ({ selectedT
               _hover: { color: 'chakra-body-text' },
             })}
           >
-            <Icons.chartBarStacked boxSize={6} cursor="pointer" />
+          <ListFilter className="h-3.5 w-3.5" />
             <VisuallyHidden>Catégories</VisuallyHidden>
           </NavLink>
         </Tooltip>
@@ -110,7 +113,7 @@ const AdminSideBar: React.FC<Pick<AdminCardProps, 'selectedTab'>> = ({ selectedT
               _hover: { color: 'chakra-body-text' },
             })}
           >
-            <Icons.settings boxSize={6} cursor="pointer" />
+          <ListFilter className="h-3.5 w-3.5" />
             <VisuallyHidden>Paramètres</VisuallyHidden>
           </NavLink>
         </Tooltip>
