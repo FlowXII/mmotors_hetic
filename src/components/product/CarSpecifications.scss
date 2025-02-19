@@ -1,0 +1,27 @@
+.car-specifications {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #0a0a0a;
+    padding: 20px;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+  
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      font-size: 1rem;
+    }
+  
+    .spec-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      width: 2rem;
+    }
+  
+    .spec-label {
+      font-weight: bold;
+    }
+  }

@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Panchang:wght@300;400;600&display=swap');
+
+body {
+  font-family: 'Panchang', sans-serif;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.product-details {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 3.2rem;
+  text-align: center;
+}
+
+.category {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.gallery {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+
+  .image-grid {
+    display: flex;
+    gap: 10px;
+  }
+
+  .main-image {
+    flex: 2;
+    img {
+      width: 100%;
+      border-radius: 12px;
+    }
+  }
+
+  .image-thumbnails {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .thumbnail-row {
+    display: flex;
+    gap: 10px;
+
+    img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .more-images {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 0, 0, 0.8);
+      color: white;
+      font-size: 16px;
+      border-radius: 12px;
+      flex-grow: 1;
+      text-align: center;
+    }
+  }
+}
+
+.info-box {
+  background: #e60012;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.pricing-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  background: #333;
+  padding: 20px;
+  border-radius: 12px;
+
+  .price-info {
+    font-size: 22px;
+  }
+
+  .reserve-btn {
+    font-family: 'Panchang', sans-serif;
+    background: black;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 'none';
+    border: none !important;
+  }
+}
+
+.similar-cars {
+  text-align: center;
+  margin-top: 40px;
+  border-radius: 12px;
+  background: #222;
+  padding: 15px;
+
+  h2 {
+    font-size: 24px;
+  }
+}
