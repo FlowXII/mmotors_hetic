@@ -1,4 +1,4 @@
-from .user import User
-from .product import Product
+from .user import User, UserCreate, UserResponse
+# from .product import Product
 
-__all__ = ["User", "Product"] 
+__all__ = ["User"] 

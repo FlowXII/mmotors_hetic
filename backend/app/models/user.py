@@ -1,16 +1,36 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from sqlalchemy.sql import func
-from app.database import Base
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import Boolean, String, Integer, DateTime, func
+from app.database import Base  # Import Base from database.py
+from pydantic import BaseModel, EmailStr
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    username = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    full_name = Column(String)
-    is_active = Column(Boolean, default=True)
-    is_admin = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    username: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String, nullable=False)
+    full_name: Mapped[str | None] = mapped_column(String, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
+
+# Pydantic Schema for Creating a User
+class UserCreate(BaseModel):
+    email: EmailStr
+    username: str
+    password: str  # Will be hashed before saving
+    is_admin: bool = False
+
+# Pydantic Schema for Returning User Data
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    username: str
+    full_name: str | None
+    is_active: bool
+    is_admin: bool
+
+    class Config:
+        from_attributes = True  # Required for Pydantic V2 compatibility with SQLAlchemy

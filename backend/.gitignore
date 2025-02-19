@@ -16,8 +16,6 @@ pids
 *.seed
 *.pid.lockù
 
-.venv/
-venv/
 backend/.venv
 backend/venv
 

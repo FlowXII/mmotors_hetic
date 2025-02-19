@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # Ajoutez le répertoire parent au PYTHONPATH
 sys.path.append(str(Path(__file__).parent.parent))
 
-from app.models import User, Product
+from app.models import User
 
 # Chargement des variables d'environnement
 load_dotenv()
