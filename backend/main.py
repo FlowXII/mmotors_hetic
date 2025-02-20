@@ -1,23 +1,24 @@
 from typing import Union
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from typing import List
 from app.database import get_db
-from app.models.user import User, UserCreate, UserResponse  # Ensure correct import
+from app.models import User, UserCreate, UserResponse, Product, TransactionType, Dossier, ProductCreate, ProductResponse, DossierCreate, DossierResponse, DossierStatus
 # from app.security import  # Import password functions
 from fastapi.security import OAuth2PasswordRequestForm
 from app.auth import oauth2_scheme, get_current_user, create_access_token, hash_password, verify_password 
 
-app = FastAPI()
+router = APIRouter()
 
-@app.get("/")
+@router.get("/")
 def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/test-db")
+@router.get("/test-db")
 def test_db(db: Session = Depends(get_db)):
     try:
         count = db.query(User).count()
@@ -25,7 +26,7 @@ def test_db(db: Session = Depends(get_db)):
     except Exception as e:
         return {"error": f"Erreur de connexion : {str(e)}"}        
 
-@app.post("/users/signin", response_model=UserResponse)
+@router.post("/users/signin", response_model=UserResponse)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
@@ -43,7 +44,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     
     return new_user
 
-@app.post("/users/login")
+@router.post("/users/login")
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
@@ -54,7 +55,7 @@ async def login_for_access_token(
     access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/protected")
+@router.get("/protected")
 async def protected_route(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_data = get_current_user(token)
     user = db.query(User).filter(User.username == user_data["username"]).first()
@@ -63,7 +64,7 @@ async def protected_route(token: str = Depends(oauth2_scheme), db: Session = Dep
     
     return {"message": f"Hello, {user.username}! This is a protected resource."}
 
-@app.get("/admin-only")
+@router.get("/admin-only")
 def admin_route(user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.username == user["username"]).first()
     
@@ -71,3 +72,80 @@ def admin_route(user: dict = Depends(get_current_user), db: Session = Depends(ge
         raise HTTPException(status_code=403, detail="Admins only")
 
     return {"message": "Welcome, Admin!"}
+
+# ✅ Get all vehicles (Filter by sale or rental)
+@router.get("/products/", response_model=List[ProductResponse])
+def get_vehicles(transaction_type: TransactionType | None = None, db: Session = Depends(get_db)):
+    query = db.query(Product)
+    if transaction_type:
+        query = query.filter(Product.transaction_type == transaction_type)
+    return query.all()
+
+# ✅ Get a specific vehicle
+@router.get("/products/{product_id}", response_model=ProductResponse)
+def get_vehicle(product_id: int, db: Session = Depends(get_db)):
+    vehicle = db.query(Product).filter(Product.id == product_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    return vehicle
+
+# ✅ Admin: Add a new vehicle
+@router.post("/products/", response_model=ProductResponse)
+def add_vehicle(vehicle_data: ProductCreate, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    if not user["is_admin"]:
+        raise HTTPException(status_code=403, detail="Admins only")
+
+    new_vehicle = Product(**vehicle_data.dict())  # ✅ Create SQLAlchemy instance from Pydantic model
+    db.add(new_vehicle)
+    db.commit()
+    db.refresh(new_vehicle)
+
+    return new_vehicle
+
+# ✅ Admin: Switch a vehicle from sale ↔ rental
+@router.put("/products/{product_id}/switch")
+def switch_vehicle_status(product_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    if not user["is_admin"]:
+        raise HTTPException(status_code=403, detail="Admins only")
+
+    vehicle = db.query(Product).filter(Product.id == product_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+    vehicle.transaction_type = (
+        TransactionType.RENTAL if vehicle.transaction_type == TransactionType.SALE else TransactionType.SALE
+    )
+    db.commit()
+    return {"message": f"Vehicle {vehicle.name} is now available for {vehicle.transaction_type.value}"}
+
+# ✅ Client: Submit a purchase/rental dossier
+@router.post("/dossiers/")
+def submit_dossier(product_id: int, document_link: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    dossier = Dossier(user_id=user["id"], product_id=product_id, document_link=document_link)
+    db.add(dossier)
+    db.commit()
+    return {"message": "Dossier submitted successfully", "status": dossier.status.value}
+
+# ✅ Admin: View all dossiers
+@router.get("/dossiers/")
+def get_all_dossiers(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    if not user["is_admin"]:
+        raise HTTPException(status_code=403, detail="Admins only")
+
+    return db.query(Dossier).all()
+
+# ✅ Admin: Validate or reject a dossier
+@router.put("/dossiers/{dossier_id}/validate", response_model=DossierResponse)
+def validate_dossier(dossier_id: int, status: DossierStatus, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    if not user["is_admin"]:
+        raise HTTPException(status_code=403, detail="Admins only")
+
+    dossier = db.query(Dossier).filter(Dossier.id == dossier_id).first()
+    if not dossier:
+        raise HTTPException(status_code=404, detail="Dossier not found")
+
+    dossier.status = status
+    db.commit()
+    db.refresh(dossier)
+
+    return dossier  

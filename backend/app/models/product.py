@@ -1,73 +1,84 @@
-# from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Enum
-# from sqlalchemy.sql import func
-# import enum
-# from app.database import Base
-
-# class VehicleType(enum.Enum):
-#     CAR = "car"
-#     MOTORCYCLE = "motorcycle"
-#     BOAT = "boat"
-
-# class Product(Base):
-#     __tablename__ = "products"
-
-#     id = Column(Integer, primary_key=True, index=True)
-#     name = Column(String, index=True, nullable=False)
-#     description = Column(Text)
-#     price = Column(Float, nullable=False)
-#     vehicle_type = Column(Enum(VehicleType), nullable=False)
-#     brand = Column(String, index=True)
-#     model = Column(String)
-#     year = Column(Integer)
-#     mileage = Column(Float)
-#     created_at = Column(DateTime(timezone=True), server_default=func.now())
-#     updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
-
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Boolean, Column, Integer, String, Float, DateTime, Enum, ForeignKey
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Text, DateTime, Enum
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
-import enum
 from app.database import Base
+import enum
+from pydantic import BaseModel
+from datetime import datetime
+from typing import Optional, List
 
-# ✅ Vehicle Type Enum
 class VehicleType(enum.Enum):
     CAR = "car"
     MOTORCYCLE = "motorcycle"
     BOAT = "boat"
 
-# ✅ Purchase or Rental Enum
 class TransactionType(enum.Enum):
     SALE = "sale"
     RENTAL = "rental"
 
-# ✅ Dossier Status Enum
-class DossierStatus(enum.Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
+
 
 class Product(Base):
     __tablename__ = "products"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    description: Mapped[str | None] = mapped_column(String)
-    price: Mapped[float] = mapped_column(Float, nullable=False)
-    vehicle_type: Mapped[VehicleType] = mapped_column(Enum(VehicleType), nullable=False)
-    transaction_type: Mapped[TransactionType] = mapped_column(Enum(TransactionType), nullable=False)
-    brand: Mapped[str] = mapped_column(String, nullable=True)
-    model: Mapped[str | None] = mapped_column(String)
-    year: Mapped[int | None] = mapped_column(Integer)
-    mileage: Mapped[float | None] = mapped_column(Float)
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now())
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True, nullable=False)
+    description = Column(Text)
+    price = Column(Float, nullable=False)
+    vehicle_type = Column(Enum(VehicleType), nullable=False)
+    brand = Column(String, index=True)
+    model = Column(String)
+    year = Column(Integer)
+    mileage = Column(Float)
+    is_for_sale = Column(Boolean, default=True)
+    is_for_rent = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-class Dossier(Base):
-    __tablename__ = "dossiers"
+    dossiers = relationship("Dossier", back_populates="product")
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
-    product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False)
-    status: Mapped[DossierStatus] = mapped_column(Enum(DossierStatus), default=DossierStatus.PENDING, nullable=False)
-    document_link: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class ProductCreate(BaseModel):
+    name: str
+    description: str | None = None
+    price: float
+    vehicle_type: VehicleType
+    transaction_type: TransactionType
+    brand: str | None = None
+    model: str | None = None
+    year: int | None = None
+    mileage: float | None = None
+
+class ProductResponse(ProductCreate):
+    id: int
+    created_at: str
+    updated_at: str | None = None
+
+    class Config:
+        from_attributes = True 
+
+
+# --- Product Schemas ---
+class ProductBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    vehicle_type: VehicleType
+    brand: str
+    model: str
+    year: int
+    mileage: float
+    is_for_sale: bool = True
+    is_for_rent: bool = False
+
+class ProductCreate(ProductBase):
+    pass
+
+class ProductResponse(ProductBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
