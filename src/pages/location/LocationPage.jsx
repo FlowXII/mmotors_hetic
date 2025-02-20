@@ -2,12 +2,7 @@ import React from 'react';
 import './LocationPage.scss';
 import Select from '../../components/form/Select';
 import ProductCard from '../../components/product/ProductCard';
-
-// Liste des voitures
-const cars = [
-    { id: "r34", name: "NISSAN R34 GT-R", category: "Sportive", image: "/gtr.png", price: 350, minDays: 10 },
-    { id: "r35", name: "NISSAN R35 GT-R", category: "Sportive", image: "/car1.jpg", price: 400, minDays: 8 }
-];
+import cars from '../../data/cars'; // Chemin mis à jour
 
 export default function LocationPage() {
   return (
