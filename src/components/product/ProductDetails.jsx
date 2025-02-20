@@ -40,7 +40,7 @@ export default function ProductDetails() {
   return (
     <>
       <Helmet>
-        <title>Luxury Car Rental - {car.name}</title>
+        <title>MMotors - {car.name}</title>
         <meta
           name="description"
           content={`Explore our exclusive luxury car rental options including the ${car.name}. Enjoy premium features for an unforgettable driving experience. Reserve now for special rates.`}
