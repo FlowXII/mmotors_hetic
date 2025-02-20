@@ -1,10 +1,10 @@
-import React from "react";
-import { Card, CardHeader, CardBody, CardFooter, Heading, Skeleton, Box, CardRoot } from "@chakra-ui/react";
+import React, { FC } from "react";
+import { Card, CardHeader, CardBody, CardFooter, Heading, Skeleton, Box } from "@chakra-ui/react";
 import AdminTable from "./AdminTable";
 import { AdminCardProps } from "../types/AdminCardProps";
 import TablePlaceholder from "./TablePlaceHolder";
 
-const AdminCard: React.FC<AdminCardProps> = ({
+const AdminCard: FC<AdminCardProps> = ({
   selectedTab,
   items,
   loading,
@@ -16,7 +16,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
   const columns = items.length > 0 ? Object.keys(items[0]) : [];
   
   return (
-    <CardRoot>
+    <Card>
       <CardHeader>
         <Heading as="h3" size="md">
           {selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)}
@@ -50,7 +50,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
           )}
         </Box>
       </CardFooter>
-    </CardRoot>
+    </Card>
   );
 };
 

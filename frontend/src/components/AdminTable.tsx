@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import {
   Table,
 } from '@chakra-ui/react';
+
+
 import { MoreHorizontal } from 'lucide-react';
-import { ProductForm } from '../forms/productForm';
-import { CategoryForm } from '../forms/categoryForm';
-import { Product } from '@/types/Product';
+import { VehicleForm } from '../forms/VehicleForm';
+import { DossierForm } from '../forms/DossierForm';
+
 import {
   MenuRoot,
   MenuTrigger,
   MenuContent,
   MenuItem,
-} from '../components/ui/menu';
+} from './ui/menu';
+
 import {
   DialogRoot,
   DialogTrigger,
@@ -21,7 +24,7 @@ import {
   DialogTitle,
   DialogBody,
   DialogFooter,
-} from '../components/ui/dialog';
+} from './ui/dialog';
 
 const getNumberColumns = (index) => {
   if (index > 2) return { base: 'none', lg: 'table-cell' };
@@ -33,12 +36,12 @@ const getNumberColumns = (index) => {
 const AdminTable = ({ items, columns, editItem, removeItem, selectedTab, onAddClick, onEditClick }) => {
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [currentItem, setCurrentItem] = useState(null);
-  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
-  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
+  const [isVehicleFormOpen, setisVehicleFormOpen] = useState(false);
+  const [isDossierOpenForm, setisDossierOpenForm] = useState(false);
 
   const handleEditClick = (item) => {
     setCurrentItem(item);
-    selectedTab === 'produits' ? setIsProductFormOpen(true) : setIsCategoryFormOpen(true);
+    selectedTab === 'produits' ? setisVehicleFormOpen(true) : setisDossierOpenForm(true);
   };
 
   const handleDelete = (id) => {
@@ -88,19 +91,19 @@ const AdminTable = ({ items, columns, editItem, removeItem, selectedTab, onAddCl
         </Table.Body>
       </Table.Root>
 
-      {isProductFormOpen && (
-        <ProductForm
-          isOpen={isProductFormOpen}
-          onClose={() => setIsProductFormOpen(false)}
+      {isVehicleFormOpen && (
+        <VehicleForm
+          isOpen={isVehicleFormOpen}
+          onClose={() => setisVehicleFormOpen(false)}
           onSubmit={onEditClick}
           defaultValues={currentItem || {}}
         />
       )}
 
-      {isCategoryFormOpen && (
-        <CategoryForm
-          isOpen={isCategoryFormOpen}
-          onClose={() => setIsCategoryFormOpen(false)}
+      {isDossierOpenForm && (
+        <DossierForm
+          isOpen={isDossierOpenForm}
+          onClose={() => setisDossierOpenForm(false)}
           onSubmit={onEditClick}
           defaultValues={currentItem || {}}
         />
