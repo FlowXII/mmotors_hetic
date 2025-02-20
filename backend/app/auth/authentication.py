@@ -17,18 +17,20 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        status_code=401, detail="Could not validate credentials"
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print("Decoded Token Payload:", payload)  # Debugging Line
+
         username: str = payload.get("sub")
+        user_id: int = payload.get("user_id")  # Extract user_id
         is_admin: bool = payload.get("is_admin", False)
 
-        if username is None:
+        if username is None or user_id is None:
             raise credentials_exception
 
-        return {"username": username, "is_admin": is_admin}
+        return {"id": user_id, "username": username, "is_admin": is_admin}
+
     except JWTError:
         raise credentials_exception

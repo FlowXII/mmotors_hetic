@@ -1,6 +1,6 @@
 from typing import Union
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -52,7 +52,8 @@ async def login_for_access_token(
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": user.username, "user_id": user.id, "is_admin": user.is_admin})
+    
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/protected")
@@ -90,21 +91,39 @@ def get_vehicle(product_id: int, db: Session = Depends(get_db)):
     return vehicle
 
 # ✅ Admin: Add a new vehicle
-@router.post("/products/", response_model=ProductResponse)
-def add_vehicle(vehicle_data: ProductCreate, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    if not user["is_admin"]:
-        raise HTTPException(status_code=403, detail="Admins only")
+@router.post("/dossiers/")
+def create_dossier(
+    dossier: DossierCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    print(f"Received Dossier Data: {dossier}")  # ✅ Debugging
+    print(f"Current User Data: {current_user}")  # ✅ Debugging
 
-    new_vehicle = Product(**vehicle_data.dict())  # ✅ Create SQLAlchemy instance from Pydantic model
-    db.add(new_vehicle)
+    user_id = current_user.get("user_id")  # ✅ Fix: Ensure we correctly fetch user_id
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="User ID not found in token.")
+
+    db_dossier = Dossier(
+        **dossier.dict(),
+        user_id=user_id,  # ✅ Now it should work correctly
+        status="pending"
+    )
+    
+    db.add(db_dossier)
     db.commit()
-    db.refresh(new_vehicle)
-
-    return new_vehicle
+    db.refresh(db_dossier)
+    
+    return db_dossier
 
 # ✅ Admin: Switch a vehicle from sale ↔ rental
 @router.put("/products/{product_id}/switch")
 def switch_vehicle_status(product_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    print(f"User Data: {user}")  # ✅ Debugging Step
+
+    if "is_admin" not in user:
+        raise HTTPException(status_code=403, detail="User data is missing 'is_admin' key")
+
     if not user["is_admin"]:
         raise HTTPException(status_code=403, detail="Admins only")
 
@@ -112,19 +131,34 @@ def switch_vehicle_status(product_id: int, db: Session = Depends(get_db), user: 
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    vehicle.transaction_type = (
-        TransactionType.RENTAL if vehicle.transaction_type == TransactionType.SALE else TransactionType.SALE
-    )
+    vehicle.is_for_rent, vehicle.is_for_sale = vehicle.is_for_sale, vehicle.is_for_rent  # ✅ Toggle sale/rent
     db.commit()
-    return {"message": f"Vehicle {vehicle.name} is now available for {vehicle.transaction_type.value}"}
+
+    return {"message": f"Vehicle {vehicle.name} is now {'for rent' if vehicle.is_for_rent else 'for sale'}"}
+
 
 # ✅ Client: Submit a purchase/rental dossier
 @router.post("/dossiers/")
-def submit_dossier(product_id: int, document_link: str, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    dossier = Dossier(user_id=user["id"], product_id=product_id, document_link=document_link)
-    db.add(dossier)
+def create_dossier(dossier: DossierCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    print("Current User Data:", current_user)  # Debugging Line
+
+    user_id = current_user.get("id")
+    if user_id is None:
+        raise HTTPException(status_code=401, detail="User ID not found in token.")
+
+    new_dossier = Dossier(
+        product_id=dossier.product_id,
+        user_id=user_id,  # ✅ Assign current user ID
+        dossier_type=dossier.dossier_type,
+        down_payment=dossier.down_payment,
+        loan_amount=dossier.loan_amount,
+        rental_duration=dossier.rental_duration,
+        start_date=dossier.start_date
+    )
+    db.add(new_dossier)
     db.commit()
-    return {"message": "Dossier submitted successfully", "status": dossier.status.value}
+    db.refresh(new_dossier)
+    return new_dossier
 
 # ✅ Admin: View all dossiers
 @router.get("/dossiers/")

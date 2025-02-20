@@ -42,7 +42,11 @@ class Dossier(Base):
 
 class DossierCreate(BaseModel):
     product_id: int
-    document_link: str
+    dossier_type: str  # Example: "PURCHASE" or "RENTAL"
+    down_payment: Optional[float] = None
+    loan_amount: Optional[float] = None
+    rental_duration: Optional[int] = None
+    start_date: Optional[datetime] = None
 
 class DossierResponse(DossierCreate):
     id: int
