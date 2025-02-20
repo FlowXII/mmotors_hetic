@@ -1,0 +1,62 @@
+.container {
+    padding: 1rem 5vw;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    align-items: center;
+
+    .navbar {
+        background-color: black;
+        width: 100%;
+        border-radius: 8px;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+
+        .logo{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 3rem;
+        }
+
+        .connect{
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            border: 1px solid #EE1D24;
+            background-color: transparent;
+            color: #EE1D24;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-family: Panchang;
+        }
+
+        ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            font-family: Panchang;
+            font-weight: 500;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+
+            li {
+                color: white;
+
+                &.active {
+                    color: #EE1D24;
+                }
+            }
+        }
+    }
+}
