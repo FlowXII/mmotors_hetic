@@ -2,12 +2,12 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import "./ProductDetails.scss";
-import CarSpecifications from "./CarSpecifications";
-import carslocation from "../../data/carslocation";
+import CarSpecificationsAchat from "./CarSpecificationsAchat";
+import carsachat from "../../data/carsachat";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const car = carslocation.find((carslocation) => carslocation.id === Number(id)) || carslocation[0];
+  const car = carsachat.find((c) => c.id === parseInt(id, 10)) || carsachat[0];
 
   return (
     <>
@@ -49,13 +49,12 @@ export default function ProductDetails() {
 
         <section className="pricing-container">
           <div className="price-info">
-            <span className="price">{car.price}€ / Jour</span>
-            <span className="min-days"> À partir de {car.minDays} jours *</span>
+            <span className="price">A partir de {car.price} €</span>
           </div>
-          <button className="reserve-btn">RESERVER →</button>
+          <button className="reserve-btn">ACHETER →</button>
         </section>
         <section className="car-specs">
-          <CarSpecifications car={car} />
+          <CarSpecificationsAchat car={car} />
         </section>
 
         <footer className="similar-cars">

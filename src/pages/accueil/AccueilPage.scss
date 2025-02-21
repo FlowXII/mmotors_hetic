@@ -1,0 +1,49 @@
+.accueil-container {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .accueil-title {
+    font-size: 3rem;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+  
+  .accueil-text {
+    font-size: 1.2rem;
+    color: #cccccc;
+    margin-bottom: 20px;
+  }
+  
+  .accueil-button {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+    font-family: Panchang;
+    margin-right: 2.5rem;
+  }
+
+  .accueil-button2 {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+    font-family: Panchang;
+  }
+  
+  .accueil-button:hover {
+    background-color: darkred;
+  }
+
+  .accueil-button2:hover {
+    background-color: darkred;
+  }

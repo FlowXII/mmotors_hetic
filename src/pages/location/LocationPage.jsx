@@ -2,7 +2,7 @@ import React from 'react';
 import './LocationPage.scss';
 import Select from '../../components/form/Select';
 import ProductCard from '../../components/product/ProductCard';
-import cars from '../../data/cars'; // Chemin mis à jour
+import carslocation from '../../data/carslocation'; // Chemin mis à jour
 
 export default function LocationPage() {
   return (
@@ -17,7 +17,7 @@ export default function LocationPage() {
         </div>
 
         <div className="products">
-            {cars.map(car => <ProductCard key={car.id} car={car} />)}
+            {carslocation.map(car => <ProductCard key={car.id} car={car} />)}
         </div>
     </div>
   );

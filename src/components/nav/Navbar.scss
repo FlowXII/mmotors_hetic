@@ -7,6 +7,7 @@
     top: 0;
     left: 0;
     align-items: center;
+    z-index: 1000; // S'assure que la navbar est au-dessus du contenu
 
     .navbar {
         background-color: black;
@@ -18,15 +19,56 @@
         align-items: center;
         position: relative;
 
-        .logo{
+        .logo {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 3rem;
         }
 
-        .connect{
-            padding: 1rem 2rem;
+        nav {
+            flex-grow: 1; // Permet à la nav de prendre l'espace restant
+            display: flex;
+            justify-content: center;
+        }
+
+        ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            font-family: Panchang;
+            font-weight: 500;
+
+            li {
+                color: white;
+
+                &.active {
+                    color: #EE1D24;
+                }
+
+                a {
+                    text-decoration: none;
+                    color: white;
+                    transition: color 0.3s ease-in-out;
+
+                    &:hover {
+                        color: #EE1D24;
+                    }
+                }
+            }
+        }
+
+        /* Boutons d'authentification */
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-left: auto; // Aligne à droite
+        }
+
+        .connect, 
+        .register-button {
+            padding: 0.8rem 1.5rem;
             border-radius: 6px;
             border: 1px solid #EE1D24;
             background-color: transparent;
@@ -37,25 +79,12 @@
             cursor: pointer;
             font-weight: 500;
             font-family: Panchang;
-        }
+            text-decoration: none;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 
-        ul {
-            display: flex;
-            gap: 1rem;
-            list-style: none;
-            font-family: Panchang;
-            font-weight: 500;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-
-            li {
+            &:hover {
+                background-color: #EE1D24;
                 color: white;
-
-                &.active {
-                    color: #EE1D24;
-                }
             }
         }
     }

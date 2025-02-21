@@ -1,0 +1,54 @@
+/* Conteneur principal du formulaire */
+
+.login-container {
+    width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Titre "Connexion" */
+  .login-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  /* Champs de saisie */
+  .login-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  /* Bouton de connexion */
+  .login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-family: Panchang;
+  }
+  
+  /* Effet au survol du bouton */
+  .login-container button:hover {
+    background-color: darkred;
+  }
+
+  .register-button {
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  
+  .register-button:hover {
+    color: #ffffff;
+  }
+  
