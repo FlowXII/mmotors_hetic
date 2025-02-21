@@ -1,12 +1,12 @@
+from datetime import datetime
 from typing import Union
-
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from typing import List
 from app.database import get_db
-from app.models import User, UserCreate, UserResponse, Product, TransactionType, Dossier, ProductCreate, ProductResponse, DossierCreate, DossierResponse, DossierStatus
+from app.models import User, UserCreate, UserResponse, Product, TransactionType, Dossier, ProductCreate, ProductResponse, DossierCreate, DossierResponse, DossierStatus, DossierType
 # from app.security import  # Import password functions
 from fastapi.security import OAuth2PasswordRequestForm
 from app.auth import oauth2_scheme, get_current_user, create_access_token, hash_password, verify_password 
@@ -74,7 +74,7 @@ def admin_route(user: dict = Depends(get_current_user), db: Session = Depends(ge
 
     return {"message": "Welcome, Admin!"}
 
-# ✅ Get all vehicles (Filter by sale or rental)
+
 @router.get("/products/", response_model=List[ProductResponse])
 def get_vehicles(transaction_type: TransactionType | None = None, db: Session = Depends(get_db)):
     query = db.query(Product)
@@ -82,7 +82,7 @@ def get_vehicles(transaction_type: TransactionType | None = None, db: Session = 
         query = query.filter(Product.transaction_type == transaction_type)
     return query.all()
 
-# ✅ Get a specific vehicle
+
 @router.get("/products/{product_id}", response_model=ProductResponse)
 def get_vehicle(product_id: int, db: Session = Depends(get_db)):
     vehicle = db.query(Product).filter(Product.id == product_id).first()
@@ -90,36 +90,24 @@ def get_vehicle(product_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Vehicle not found")
     return vehicle
 
-# ✅ Admin: Add a new vehicle
-@router.post("/dossiers/")
-def create_dossier(
-    dossier: DossierCreate,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user)
+@router.post("/products/", response_model=ProductResponse)
+def add_vehicle(
+    vehicle_data: ProductCreate, 
+    db: Session = Depends(get_db), 
+    user: dict = Depends(get_current_user)
 ):
-    print(f"Received Dossier Data: {dossier}")  # ✅ Debugging
-    print(f"Current User Data: {current_user}")  # ✅ Debugging
+    if not user["is_admin"]:
+        raise HTTPException(status_code=403, detail="Admins only")
 
-    user_id = current_user.get("user_id")  # ✅ Fix: Ensure we correctly fetch user_id
-    if user_id is None:
-        raise HTTPException(status_code=401, detail="User ID not found in token.")
-
-    db_dossier = Dossier(
-        **dossier.dict(),
-        user_id=user_id,  # ✅ Now it should work correctly
-        status="pending"
-    )
-    
-    db.add(db_dossier)
+    new_vehicle = Product(**vehicle_data.dict())  
+    db.add(new_vehicle)
     db.commit()
-    db.refresh(db_dossier)
-    
-    return db_dossier
+    db.refresh(new_vehicle)
 
-# ✅ Admin: Switch a vehicle from sale ↔ rental
+    return new_vehicle
+
 @router.put("/products/{product_id}/switch")
 def switch_vehicle_status(product_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    print(f"User Data: {user}")  # ✅ Debugging Step
 
     if "is_admin" not in user:
         raise HTTPException(status_code=403, detail="User data is missing 'is_admin' key")
@@ -131,36 +119,47 @@ def switch_vehicle_status(product_id: int, db: Session = Depends(get_db), user: 
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    vehicle.is_for_rent, vehicle.is_for_sale = vehicle.is_for_sale, vehicle.is_for_rent  # ✅ Toggle sale/rent
+    vehicle.is_for_rent, vehicle.is_for_sale = vehicle.is_for_sale, vehicle.is_for_rent  
     db.commit()
 
     return {"message": f"Vehicle {vehicle.name} is now {'for rent' if vehicle.is_for_rent else 'for sale'}"}
 
 
-# ✅ Client: Submit a purchase/rental dossier
 @router.post("/dossiers/")
-def create_dossier(dossier: DossierCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
-    print("Current User Data:", current_user)  # Debugging Line
+def create_dossier(
+    dossier_data: DossierCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
 
-    user_id = current_user.get("id")
+    user_id = current_user.get("id")  
     if user_id is None:
         raise HTTPException(status_code=401, detail="User ID not found in token.")
 
-    new_dossier = Dossier(
-        product_id=dossier.product_id,
-        user_id=user_id,  # ✅ Assign current user ID
-        dossier_type=dossier.dossier_type,
-        down_payment=dossier.down_payment,
-        loan_amount=dossier.loan_amount,
-        rental_duration=dossier.rental_duration,
-        start_date=dossier.start_date
-    )
-    db.add(new_dossier)
-    db.commit()
-    db.refresh(new_dossier)
-    return new_dossier
 
-# ✅ Admin: View all dossiers
+    valid_dossier_types = {t.value for t in DossierType}
+    valid_statuses = {s.value for s in DossierStatus}
+
+    if dossier_data.dossier_type not in valid_dossier_types:
+        raise HTTPException(status_code=400, detail=f"Invalid dossier_type. Must be one of {valid_dossier_types}")
+
+    dossier = Dossier(
+        user_id=user_id,
+        product_id=dossier_data.product_id,
+        dossier_type=dossier_data.dossier_type,  
+        status="PENDING",  # Default status ENUM
+        down_payment=dossier_data.down_payment,
+        loan_amount=dossier_data.loan_amount,
+        rental_duration=dossier_data.rental_duration,
+        start_date=dossier_data.start_date,
+    )
+
+    db.add(dossier)
+    db.commit()
+    db.refresh(dossier)
+
+    return dossier  
+
 @router.get("/dossiers/")
 def get_all_dossiers(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if not user["is_admin"]:
@@ -168,18 +167,33 @@ def get_all_dossiers(db: Session = Depends(get_db), user: dict = Depends(get_cur
 
     return db.query(Dossier).all()
 
-# ✅ Admin: Validate or reject a dossier
-@router.put("/dossiers/{dossier_id}/validate", response_model=DossierResponse)
-def validate_dossier(dossier_id: int, status: DossierStatus, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
-    if not user["is_admin"]:
-        raise HTTPException(status_code=403, detail="Admins only")
 
+@router.put("/dossiers/{dossier_id}/validate")
+def validate_dossier(
+    dossier_id: int,
+    status: DossierStatus = Body(..., embed=True),  
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+   
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Only admins can validate dossiers.")
+
+  
     dossier = db.query(Dossier).filter(Dossier.id == dossier_id).first()
     if not dossier:
-        raise HTTPException(status_code=404, detail="Dossier not found")
+        raise HTTPException(status_code=404, detail="Dossier not found.")
 
-    dossier.status = status
+  
+    if dossier.status != DossierStatus.PENDING:
+        raise HTTPException(status_code=400, detail="Dossier is already processed.")
+
+
+    dossier.status = status  
+    dossier.reviewed_at = datetime.utcnow()
+    dossier.reviewed_by = current_user["id"]
+
     db.commit()
     db.refresh(dossier)
 
-    return dossier  
+    return {"message": f"Dossier {dossier_id} has been {status.value.lower()}."}

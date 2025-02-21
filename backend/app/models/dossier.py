@@ -26,23 +26,22 @@ class Dossier(Base):
     status = Column(Enum(DossierStatus), default=DossierStatus.PENDING)
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
     reviewed_at = Column(DateTime(timezone=True))
-    reviewed_by = Column(Integer, ForeignKey("users.id", name="fk_dossiers_reviewed_by"), nullable=True)  # ✅ Specify FK
+    reviewed_by = Column(Integer, ForeignKey("users.id", name="fk_dossiers_reviewed_by"), nullable=True)  
 
-    # Additional fields
     down_payment = Column(Float)
     loan_amount = Column(Float)
     rental_duration = Column(Integer)
     start_date = Column(DateTime)
 
-    # ✅ Explicitly define foreign keys for relationships
-    user = relationship("User", foreign_keys=[user_id], back_populates="dossiers")  # ✅ Specify FK
-    reviewer = relationship("User", foreign_keys=[reviewed_by], back_populates="reviewed_dossiers")  # ✅ Specify FK
+  
+    user = relationship("User", foreign_keys=[user_id], back_populates="dossiers") 
+    reviewer = relationship("User", foreign_keys=[reviewed_by], back_populates="reviewed_dossiers")  
     product = relationship("Product", back_populates="dossiers")
 
 
 class DossierCreate(BaseModel):
     product_id: int
-    dossier_type: str  # Example: "PURCHASE" or "RENTAL"
+    dossier_type: str  
     down_payment: Optional[float] = None
     loan_amount: Optional[float] = None
     rental_duration: Optional[int] = None

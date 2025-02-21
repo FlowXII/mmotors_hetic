@@ -16,21 +16,17 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=401, detail="Could not validate credentials"
-    )
+    """ Extracts user info from JWT token """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        print("Decoded Token Payload:", payload)  # Debugging Line
+        print(f"Decoded Token Payload: {payload}")  
+        
+        user_id = payload.get("user_id")  
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="User ID not found in token.")
 
-        username: str = payload.get("sub")
-        user_id: int = payload.get("user_id")  # Extract user_id
-        is_admin: bool = payload.get("is_admin", False)
+        return {"id": user_id, "username": payload.get("sub"), "is_admin": payload.get("is_admin", False)}
 
-        if username is None or user_id is None:
-            raise credentials_exception
-
-        return {"id": user_id, "username": username, "is_admin": is_admin}
-
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        print(f"JWT Error: {e}")  
+        raise HTTPException(status_code=401, detail="Could not validate credentials")

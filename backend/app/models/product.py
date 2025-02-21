@@ -59,7 +59,6 @@ class ProductResponse(ProductCreate):
         from_attributes = True 
 
 
-# --- Product Schemas ---
 class ProductBase(BaseModel):
     name: str
     description: Optional[str] = None

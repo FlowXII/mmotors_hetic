@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Boolean, String, Integer, DateTime, func
-from app.database import Base  # Import Base from database.py
+from app.database import Base 
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
@@ -17,18 +17,18 @@ class User(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
-    # ✅ Fix the relationship by specifying foreign keys explicitly
+ 
     dossiers = relationship("Dossier", foreign_keys="[Dossier.user_id]", back_populates="user")
     reviewed_dossiers = relationship("Dossier", foreign_keys="[Dossier.reviewed_by]", back_populates="reviewer")
 
-# Pydantic Schema for Creating a User
+
 class UserCreate(BaseModel):
     email: EmailStr
     username: str
-    password: str  # Will be hashed before saving
+    password: str 
     is_admin: bool = False
 
-# Pydantic Schema for Returning User Data
+
 class UserResponse(BaseModel):
     id: int
     email: str
@@ -38,7 +38,7 @@ class UserResponse(BaseModel):
     is_admin: bool
 
     class Config:
-        from_attributes = True  # Required for Pydantic V2 compatibility with SQLAlchemy
+        from_attributes = True  
 
 class UserBase(BaseModel):
     email: EmailStr
