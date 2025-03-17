@@ -30,6 +30,10 @@
             flex-grow: 1; // Permet à la nav de prendre l'espace restant
             display: flex;
             justify-content: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
         }
 
         ul {
@@ -56,14 +60,6 @@
                     }
                 }
             }
-        }
-
-        /* Boutons d'authentification */
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            margin-left: auto; // Aligne à droite
         }
 
         .connect, 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/nav/Navbar";
 import LocationPage from "./pages/location/LocationPage";
@@ -6,26 +6,35 @@ import AccueilPage from "./pages/accueil/AccueilPage";
 import AchatPage from "./pages/achat/AchatPage";
 import ProductDetails from './components/product/ProductDetails';
 import ProductDetailsAchat from './components/product/ProductDetailsAchat';
-import LoginPage from "./pages/auth/LoginPage"; // Importation de la page de connexion
-import RegisterPage from "./pages/auth/RegisterPage"; // Importation de la page de connexion
+import { PopUpProvider, PopUpContext } from './context/PopUpContext';
+import LoginPopUp from "./components/pop-up/auth/login/LoginPopUp";
+import RegisterPopUp from "./components/pop-up/auth/register/RegisterPopUp";
+import ReservationPopUp from "./components/pop-up/reservation/ReservationPopUp.jsx";
 
 function App() {
   return (
+    <PopUpProvider>
+      <AppContent />
+    </PopUpProvider>
+  );
+}
+
+function AppContent() {
+  const { popUpStatus, setPopUpStatus } = useContext(PopUpContext);
+
+  return (
     <>
       <Navbar />
+      {popUpStatus === 'login' && <LoginPopUp setPopUpStatus={setPopUpStatus} />}
+      {popUpStatus === 'register' && <RegisterPopUp setPopUpStatus={setPopUpStatus} />}
+      {popUpStatus === 'reservation' && <ReservationPopUp setPopUpStatus={setPopUpStatus} />}
       <Routes>
-        {/* Page d'accueil */}
         <Route path="/" element={<AccueilPage />} />
-        {/* Page de location */}
         <Route path="/location" element={<LocationPage />} />
-        {/* Page d'achat */}
         <Route path="/achat" element={<AchatPage />} />
-        {/* Page de connexion */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/location/:id" element={<ProductDetails />} />
         <Route path="/achat/:id" element={<ProductDetailsAchat />} />
-        </Routes>
+      </Routes>
     </>
   );
 }
