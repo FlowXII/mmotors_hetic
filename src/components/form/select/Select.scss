@@ -1,0 +1,81 @@
+.select{
+    position: relative;
+    width: 20rem;
+    font-family: Panchang;
+
+    .current{
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 5rem;
+        border-radius: 8px;
+        border: 1px solid #252121;
+        padding: 1rem;
+
+        cursor:pointer;
+        transition: all 0.1s ease-in-out;
+        
+        &:hover{
+            opacity: 0.6;
+        }
+
+        img{
+            width: 1rem;
+        }
+
+
+        .name{
+            position: absolute;
+            top:-18%;
+            left:5%;
+            background-color: white;
+            width: auto;
+            padding: 0 0.5rem;
+            font-size: 0.75rem;
+            color: #000000CC;
+        }
+    }
+
+    .options{
+        position: absolute;
+        width: 100%;
+        left:0;
+        top: 5rem;
+        display: flex;
+        flex-direction: column;
+        gap:0.5rem;
+        padding: 0.5rem;
+        max-height: 20rem;
+        overflow-y: scroll;
+        background-color: white;
+        box-shadow: 0px 0px 10px 0px #00000033;
+        opacity: 0;
+        transform: translateY(-1rem);
+        transition: all 0.2s ease-in-out;
+
+        .option{
+            padding: 1rem 0.5rem;
+            border-radius: 8px;
+
+            cursor: default;
+
+            &:hover{
+                background-color: #00000011;
+            }
+
+            &.selected{
+                background-color: #EE1D24;
+                color: white;
+            }
+        }
+
+        // fais une animation qui rajoute display flex puis translateY(0) et opacity 1
+
+
+
+        &.open{
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
