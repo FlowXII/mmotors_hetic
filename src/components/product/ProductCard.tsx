@@ -1,9 +1,17 @@
 import React from 'react'
 import './ProductCard.scss'
+import { Link } from 'react-router-dom'
 
-export default function ProductCard() {
+type Props = {
+    isLight?: boolean,
+    minWidth?: string
+}
+
+export default function ProductCard(props: Props) {
     return (
-        <div className='product-card'>
+        <Link to={"/location/1"} className={'product-card' + (props.isLight ? ' light' : '')}
+        style={{minWidth: props.minWidth}}
+        >
             <div className="top">
                 <h4 className='title'>NISSAN R34 GT-R</h4>
                 <p className='cat'>Sportive</p>
@@ -25,6 +33,6 @@ export default function ProductCard() {
                 </button>
             </div>
 
-        </div>
+        </Link>
     )
 }

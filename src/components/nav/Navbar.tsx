@@ -16,7 +16,7 @@ export default function Navbar() {
     const { setPopUpStatus } = useContext(PopUpContext);
 
     return (
-        <div className="container">
+        <div className="container-nav">
             <div className='navbar'>
                 <a href="/" className='logo'>
                     <img src="/logo/light.png" alt="logo" />

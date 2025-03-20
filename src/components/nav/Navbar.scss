@@ -1,4 +1,4 @@
-.container {
+.container-nav {
     padding: 1rem 5vw;
     position: fixed;
     display: flex;
@@ -6,6 +6,7 @@
     width: 100vw;
     top: 0;
     left: 0;
+    z-index: 1000;
     align-items: center;
 
     .navbar {

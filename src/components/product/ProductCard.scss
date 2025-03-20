@@ -10,6 +10,12 @@
     color: white;
     padding: 1.7rem;
     font-family: Panchang;
+    z-index: 0;
+
+    &.light{
+        color:#252121;
+        background: #F3E7E7B2;
+    }
 
     transition: all 0.2s ease-in-out;
 
