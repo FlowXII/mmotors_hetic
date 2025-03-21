@@ -24,6 +24,12 @@
         position: relative;
         gap:2rem;
 
+        .left-img{
+            width: 50%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .two-cols{
             display: flex;
             gap:1rem;
@@ -38,6 +44,7 @@
                 color:#F3E7E7B2;
                 font-size: 1.5rem;
                 font-weight: 600s;
+                font-family: Panchang;
             }
 
             p{
@@ -90,6 +97,8 @@
                 font-weight: 600;
                 font-size: 0.8rem;
                 color: #F3E7E7B2;
+
+                font-family: Panchang;
 
                 a{
                     color: #EE1D24;

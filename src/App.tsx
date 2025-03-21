@@ -20,7 +20,7 @@ function App() {
 
 function AppContent() {
 
-  const {popUpStatus, setPopUpStatus}= useContext(PopUpContext)
+  const {popUpStatus}= useContext(PopUpContext)
 
   const location= useLocation();
 

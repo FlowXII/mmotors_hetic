@@ -23,6 +23,14 @@
         opacity: 0.8;
     }
 
+    .calendar{
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        height: 1.5rem;
+    }
+
     label{
         position: absolute;
         background-color: #252121;
@@ -40,9 +48,19 @@
         cursor: text;
 
         &.focused{
-            color:#F3E7E7B2;
             transform: translateX(0) scale(0.8) translateY(-165%); 
+            color:#F3E7E7B2;
             cursor: default;
+        }
+    }
+
+    &.date{
+        cursor: pointer;
+        input{
+            cursor: pointer;
+        }
+        label{
+            cursor: pointer;
         }
     }
 

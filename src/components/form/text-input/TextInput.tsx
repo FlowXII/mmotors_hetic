@@ -18,14 +18,15 @@ const TextInput = ({ type = 'text', placeholder, ...props }:
     >
       {placeholder && (
         <label 
-          onClick={() => inputRef?.current?.focus()} 
+          //@ts-ignore
+          onClick={() => ref?.current?.focus()} 
           className={(isFocused || hasText) ? 'focused' : ''}
         >
           {placeholder}
         </label>
       )}
       <input
-        ref={inputRef}
+        ref={ref}
         type={type}
         onFocus={() => setIsFocused(true)}
         onBlur={(e) => {

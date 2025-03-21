@@ -16,6 +16,10 @@ button {
     text-decoration: none;
     transition: al 0.3s ease-in-out, color 0.3s ease-in-out;
 
+    &.secondary{
+        background-color: #F3E7E7B2;
+    }
+
     &.outline{
         border: 1px solid #EE1D24;
         background-color: transparent;

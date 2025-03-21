@@ -1,0 +1,97 @@
+.date-picker-container{
+    position: relative;
+}
+
+.date-picker{
+    position: absolute;
+    border-radius: 8px;
+    top: -700%;
+    right: 0;
+    width: 40rem;
+    box-shadow: 0px 4px 20px 5px rgba(0, 0, 0, 0.6); /* Box-shadow plus intense */
+    background-color: #252121;
+    z-index: 10;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+
+    .month-selector{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap:2rem;
+
+        padding: 0 4rem;
+
+        width: 100%;
+
+        white-space: nowrap;
+    }
+
+    .day-selector{
+        .days{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1rem;
+            
+            p{
+                text-align: center;
+                padding: 1rem;
+                border-radius: 8px;
+                transition: all 0.1s ease-in-out;
+                
+                &.not-selectable{
+                    color:#F3E7E74D;
+                    cursor: default;
+                }
+
+                
+                &:not(.not-selectable){
+                    &.selectable:hover{
+                        cursor: pointer;
+                        background-color: rgba(255, 255, 255, 0.1);
+                    }
+                }
+
+                &.between-dates, &.first-date{
+                    background-color: #000000;
+                    border-radius: 0;
+                    position: relative;
+
+                    &::after{
+                        // on prolonge le background noir sur le gap à droite
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        right: -1rem;
+                        width: 1rem;
+                        height: 100%;
+                        background-color: #000000;
+                    }
+                }
+
+                &.selected{
+                    background-color: #EE1D24 !important;
+                    color: white !important;
+                    border-radius: 8px;
+
+                    &:hover{
+                        background-color: #EE1D24;
+                        cursor:default
+                    }
+                }
+
+            }
+        }
+    }
+
+    .close-btn{
+        position: absolute;
+        top: 1.5rem !important;
+        right: 1.5rem !important;
+        cursor: pointer;
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}

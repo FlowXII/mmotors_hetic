@@ -1,6 +1,8 @@
+import { useContext } from 'react'
 import Button from '../../components/form/button/Button'
 import ProductCard from '../../components/product/ProductCard'
 import './LocationDetail.scss'
+import { PopUpContext } from '../../context/PopUpContext'
 
 export default function LocationDetail() {
 
@@ -35,6 +37,8 @@ export default function LocationDetail() {
         name: "Crit'air 1",
     }
   ]
+
+  const {setPopUpStatus} = useContext(PopUpContext);
 
   return (
     <div className='location-detail'>
@@ -88,7 +92,7 @@ export default function LocationDetail() {
 
         <div className="vehicules-similaires">
             <h3>Véhicules similaires</h3>
-            <div className="horizontal-scroll">
+            <div className="horizontal-scroll"> 
                 <ProductCard isLight minWidth='32rem'/>
                 <ProductCard isLight minWidth='32rem'/>
                 <ProductCard isLight minWidth='32rem'/>
@@ -105,7 +109,7 @@ export default function LocationDetail() {
                     <p>A partir de 10 jours *</p>
                 </div>
 
-                <Button>Reserver</Button>
+                <Button onClick={() => setPopUpStatus('reservation')}>Reserver</Button>
             </div>
         </div>
     </div>
